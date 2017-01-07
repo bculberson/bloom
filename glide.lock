@@ -1,0 +1,17 @@
+hash: 2eabd49f2643d72f4dda2026a0ec53b96f7fd8a8308c623336bf196dcf6da137
+updated: 2017-01-06T21:56:10.010570945-07:00
+imports:
+- name: github.com/alicebob/miniredis
+  version: 10ddf01f45bee3c40d1af5dbaad9aa71e6f20835
+- name: github.com/bsm/redeo
+  version: 1ce09fc76693fb3c1ca9b529c66f38920beb6fb8
+  subpackages:
+  - info
+- name: github.com/garyburd/redigo
+  version: 8873b2f1995f59d4bcdd2b0dc9858e2cb9bf0c13
+  subpackages:
+  - internal
+  - redis
+- name: github.com/willf/bitset
+  version: 3582df120789e0e260108c11fd01775b30782fa7
+testImports: []
