@@ -6,7 +6,6 @@ import (
 )
 
 type BitSetProvider interface {
-	New(uint) error
 	Set(uint) error
 	Test(uint) (bool, error)
 }
@@ -20,10 +19,6 @@ type BloomFilter struct {
 // Creates a new Bloom filter for about n items with fp false positive rate
 func New(n uint, fp float64, bitSet BitSetProvider) (*BloomFilter, error) {
 	m, k := estimateParameters(n, fp)
-	err := bitSet.New(m)
-	if err != nil {
-		return nil, err
-	}
 	return &BloomFilter{m: m, k: k, bitSet: bitSet}, nil
 }
 
@@ -62,7 +57,7 @@ func (f *BloomFilter) Exists(data []byte) (bool, error) {
 }
 
 func (f *BloomFilter) getLocation(hashValue uint64, i uint) uint {
-	return uint((hashValue * uint64(i)) % uint64(f.m))
+	return uint((hashValue * uint64(i+1)) % uint64(f.m))
 }
 
 func getHash(data []byte) uint64 {

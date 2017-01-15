@@ -5,19 +5,12 @@ import (
 )
 
 type RedisBitSet struct {
-	key   string
-	pool  *redis.Pool
+	key  string
+	pool *redis.Pool
 }
 
-func NewRedisBitSet(key string, pool *redis.Pool) (*RedisBitSet) {
+func NewRedisBitSet(key string, pool *redis.Pool) *RedisBitSet {
 	return &RedisBitSet{key, pool}
-}
-
-func (r *RedisBitSet) New(size uint) error {
-	conn := r.pool.Get()
-	defer conn.Close()
-
-	return conn.Send("SETBIT", r.key, size, 0)
 }
 
 func (r *RedisBitSet) Set(offset uint) error {

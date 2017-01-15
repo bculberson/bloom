@@ -22,10 +22,6 @@ func TestRedisBitSet_New_Set_Test(t *testing.T) {
 		Dial:        func() (redis.Conn, error) { return redis.Dial("tcp", s.Addr()) },
 	}
 	bitSet := bloom.NewRedisBitSet("test_key", pool)
-	err = bitSet.New(1024)
-	if err != nil {
-		t.Error("Could not initialize bitset in redis")
-	}
 	isSetBefore, err := bitSet.Test(0)
 	if err != nil {
 		t.Error("Could not test bitset in redis")
