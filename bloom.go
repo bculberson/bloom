@@ -6,8 +6,8 @@ import (
 )
 
 type BitSetProvider interface {
-	Set(uint) error
-	Test(uint) (bool, error)
+	Set([]uint) error
+	Test([]uint) (bool, error)
 }
 
 type BloomFilter struct {
@@ -30,34 +30,34 @@ func estimateParameters(n uint, p float64) (uint, uint) {
 }
 
 func (f *BloomFilter) Add(data []byte) error {
-	hashValue := getHash(data)
-	for i := uint(0); i < f.k; i++ {
-		location := f.getLocation(hashValue, i)
-		err := f.bitSet.Set(location)
-		if err != nil {
-			return err
-		}
+	locations := f.getLocations(data)
+	err := f.bitSet.Set(locations)
+	if err != nil {
+		return err
 	}
 	return nil
 }
 
 func (f *BloomFilter) Exists(data []byte) (bool, error) {
-	hashValue := getHash(data)
-	for i := uint(0); i < f.k; i++ {
-		location := f.getLocation(hashValue, i)
-		isSet, err := f.bitSet.Test(location)
-		if err != nil {
-			return false, err
-		}
-		if !isSet {
-			return false, nil
-		}
+	locations := f.getLocations(data)
+	isSet, err := f.bitSet.Test(locations)
+	if err != nil {
+		return false, err
 	}
+	if !isSet {
+		return false, nil
+	}
+
 	return true, nil
 }
 
-func (f *BloomFilter) getLocation(hashValue uint64, i uint) uint {
-	return uint((hashValue * uint64(i+1)) % uint64(f.m))
+func (f *BloomFilter) getLocations(data []byte) []uint {
+	hashValue := getHash(data)
+	locations := make([]uint, f.k)
+	for i := uint(0); i < f.k; i++ {
+		locations[i] = uint((hashValue * uint64(i+1)) % uint64(f.m))
+	}
+	return locations
 }
 
 func getHash(data []byte) uint64 {

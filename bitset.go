@@ -12,28 +12,36 @@ func NewBitSet() *BitSet {
 	return &BitSet{}
 }
 
-func (b *BitSet) Set(offset uint) error {
-	if b.bitSet == nil {
-		b.bitSet = bitset.New(offset)
+func (b *BitSet) Set(offsets []uint) error {
+	maxOffset := uint(0)
+	for _, offset := range offsets {
+		if offset > maxOffset {
+			maxOffset = offset
+		}
 	}
-	if offset > b.bitSet.Len() {
+	if b.bitSet == nil {
+		b.bitSet = bitset.New(maxOffset)
+	}
+	if maxOffset > b.bitSet.Len() {
 		previousBitSet := b.bitSet
-		b.bitSet = bitset.New(offset)
+		b.bitSet = bitset.New(maxOffset)
 		b.bitSet.InPlaceUnion(previousBitSet)
 	}
-	b.bitSet.Set(offset)
+	for _, offset := range offsets {
+		b.bitSet.Set(offset)
+	}
 	return nil
 }
 
-func (b *BitSet) Test(offset uint) (bool, error) {
+func (b *BitSet) Test(offsets []uint) (bool, error) {
 	if b.bitSet == nil {
-		b.bitSet = bitset.New(offset)
+		return false, nil
 	}
-	if offset > b.bitSet.Len() {
-		previousBitSet := b.bitSet
-		b.bitSet = bitset.New(offset)
-		b.bitSet.InPlaceUnion(previousBitSet)
+	for _, offset := range offsets {
+		if offset > b.bitSet.Len() || !b.bitSet.Test(offset) {
+			return false, nil
+		}
 	}
 
-	return b.bitSet.Test(offset), nil
+	return true, nil
 }

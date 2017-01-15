@@ -22,18 +22,18 @@ func TestRedisBitSet_New_Set_Test(t *testing.T) {
 		Dial:        func() (redis.Conn, error) { return redis.Dial("tcp", s.Addr()) },
 	}
 	bitSet := bloom.NewRedisBitSet("test_key", pool)
-	isSetBefore, err := bitSet.Test(0)
+	isSetBefore, err := bitSet.Test([]uint{0})
 	if err != nil {
 		t.Error("Could not test bitset in redis")
 	}
 	if isSetBefore {
 		t.Error("Bit should not be set")
 	}
-	err = bitSet.Set(512)
+	err = bitSet.Set([]uint{512})
 	if err != nil {
 		t.Error("Could not set bitset in redis")
 	}
-	isSetAfter, err := bitSet.Test(512)
+	isSetAfter, err := bitSet.Test([]uint{512})
 	if err != nil {
 		t.Error("Could not test bitset in redis")
 	}
