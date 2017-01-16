@@ -22,27 +22,21 @@ func TestRedisBloomFilter(t *testing.T) {
 		IdleTimeout: 240 * time.Second,
 		Dial:        func() (redis.Conn, error) { return redis.Dial("tcp", s.Addr()) },
 	}
-	bitSet := bloom.NewRedisBitSet("test_key", pool)
-	b, err := bloom.New(1000, .01, bitSet)
-	if err != nil {
-		t.Fatal("Redis backed bloom filter could not be created")
-	}
+	conn := pool.Get()
+	defer conn.Close()
+
+	bitSet := bloom.NewRedisBitSet("test_key", conn)
+	b := bloom.New(1000, .01, bitSet)
 	testBloomFilter(t, b)
 }
 
 func TestBloomFilter(t *testing.T) {
-	b, err := bloom.New(1000, .01, bloom.NewBitSet())
-	if err != nil {
-		t.Fatal("Bloom filter could not be created")
-	}
+	b := bloom.New(1000, .01, bloom.NewBitSet())
 	testBloomFilter(t, b)
 }
 
 func TestCollision(t *testing.T) {
-	b, err := bloom.New(100, .01, bloom.NewBitSet())
-	if err != nil {
-		t.Fatal("Bloom filter could not be created")
-	}
+	b := bloom.New(100, .01, bloom.NewBitSet())
 	shouldNotExist := 0
 	for i := 0; i < 100; i++ {
 		data := make([]byte, 4)

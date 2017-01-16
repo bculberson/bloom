@@ -4,35 +4,35 @@ import (
 	"github.com/garyburd/redigo/redis"
 )
 
-type RedisBitSet struct {
-	key  string
-	pool *redis.Pool
+type Connection interface {
+	Do(cmd string, args ...interface{}) (reply interface{}, err error)
+	Flush() error
+	Send(cmd string, args ...interface{}) error
 }
 
-func NewRedisBitSet(key string, pool *redis.Pool) *RedisBitSet {
-	return &RedisBitSet{key, pool}
+type RedisBitSet struct {
+	key  string
+	conn Connection
+}
+
+func NewRedisBitSet(key string, conn Connection) *RedisBitSet {
+	return &RedisBitSet{key, conn}
 }
 
 func (r *RedisBitSet) Set(offsets []uint) error {
-	conn := r.pool.Get()
-	defer conn.Close()
-
 	for _, offset := range offsets {
-		err := conn.Send("SETBIT", r.key, offset, 1)
+		err := r.conn.Send("SETBIT", r.key, offset, 1)
 		if err != nil {
 			return err
 		}
 	}
 
-	return conn.Flush()
+	return r.conn.Flush()
 }
 
 func (r *RedisBitSet) Test(offsets []uint) (bool, error) {
-	conn := r.pool.Get()
-	defer conn.Close()
-
 	for _, offset := range offsets {
-		bitValue, err := redis.Int(conn.Do("GETBIT", r.key, offset))
+		bitValue, err := redis.Int(r.conn.Do("GETBIT", r.key, offset))
 		if err != nil {
 			return false, err
 		}

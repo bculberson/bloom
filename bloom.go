@@ -17,9 +17,9 @@ type BloomFilter struct {
 }
 
 // Creates a new Bloom filter for about n items with fp false positive rate
-func New(n uint, fp float64, bitSet BitSetProvider) (*BloomFilter, error) {
+func New(n uint, fp float64, bitSet BitSetProvider) *BloomFilter {
 	m, k := estimateParameters(n, fp)
-	return &BloomFilter{m: m, k: k, bitSet: bitSet}, nil
+	return &BloomFilter{m: m, k: k, bitSet: bitSet}
 }
 
 // Used with permission from https://bitbucket.org/ww/bloom/src/829aa19d01d9/bloom.go
