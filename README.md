@@ -7,6 +7,10 @@ https://en.wikipedia.org/wiki/Bloom_filter
 
 ## Example Usage (in process):
 
+install with go get gopkg.in/bculberson/bloom.v1
+
+import "gopkg.in/bculberson/bloom.v1"
+
 This bloom filter is initialized to hold 1000 keys and
 will have a false positive rate of 1% (.01).
 
