@@ -25,20 +25,25 @@ func TestRedisBloomFilter(t *testing.T) {
 	conn := pool.Get()
 	defer conn.Close()
 
-	bitSet := bloom.NewRedisBitSet("test_key", conn)
-	b := bloom.New(1000, .01, bitSet)
+	m, k := bloom.EstimateParameters(1000, .01)
+	bitSet := bloom.NewRedisBitSet("test_key", m, conn)
+	b := bloom.New(m, k, bitSet)
 	testBloomFilter(t, b)
 }
 
 func TestBloomFilter(t *testing.T) {
-	b := bloom.New(1000, .01, bloom.NewBitSet())
+	m, k := bloom.EstimateParameters(1000, .01)
+	b := bloom.New(m, k, bloom.NewBitSet())
 	testBloomFilter(t, b)
 }
 
 func TestCollision(t *testing.T) {
-	b := bloom.New(100, .01, bloom.NewBitSet())
+	n := uint(10000)
+	fp := .01
+	m, k := bloom.EstimateParameters(n, fp)
+	b := bloom.New(m, k, bloom.NewBitSet())
 	shouldNotExist := 0
-	for i := 0; i < 100; i++ {
+	for i := uint(0); i < n; i++ {
 		data := make([]byte, 4)
 		binary.LittleEndian.PutUint32(data, uint32(i))
 		existsBefore, err := b.Exists(data)
@@ -60,7 +65,7 @@ func TestCollision(t *testing.T) {
 			t.Fatal("Item should exist.")
 		}
 	}
-	if shouldNotExist > 2 {
+	if float64(shouldNotExist) > fp*float64(n) {
 		t.Fatal("Too many false positives.")
 	}
 }
