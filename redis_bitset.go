@@ -21,6 +21,7 @@ func NewRedisBitSet(key string, conn Connection) *RedisBitSet {
 
 func (r *RedisBitSet) Set(offsets []uint) error {
 	for _, offset := range offsets {
+		//TODO if > 500mb, use next key
 		err := r.conn.Send("SETBIT", r.key, offset, 1)
 		if err != nil {
 			return err
@@ -32,6 +33,7 @@ func (r *RedisBitSet) Set(offsets []uint) error {
 
 func (r *RedisBitSet) Test(offsets []uint) (bool, error) {
 	for _, offset := range offsets {
+		//TODO if > 500mb, use next key
 		bitValue, err := redis.Int(r.conn.Do("GETBIT", r.key, offset))
 		if err != nil {
 			return false, err

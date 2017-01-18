@@ -22,11 +22,11 @@ func New(n uint, fp float64, bitSet BitSetProvider) *BloomFilter {
 	return &BloomFilter{m: m, k: k, bitSet: bitSet}
 }
 
-// Used with permission from https://bitbucket.org/ww/bloom/src/829aa19d01d9/bloom.go
 func estimateParameters(n uint, p float64) (uint, uint) {
-	m := uint(math.Ceil(-1 * float64(n) * math.Log(p) / math.Pow(math.Log(2), 2)))
-	k := uint(math.Ceil(math.Log(2) * float64(m) / float64(n)))
-	return m, k
+	m := math.Ceil((float64(n) * math.Log(p)) / math.Log(1.0 / (math.Pow(2.0, math.Ln2))))
+	k := math.Log(2.0) * m / float64(n)
+
+	return uint(m), uint(k)
 }
 
 func (f *BloomFilter) Add(data []byte) error {
