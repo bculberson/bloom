@@ -3,6 +3,7 @@ package bloom
 import (
 	"hash/fnv"
 	"math"
+	"encoding/binary"
 )
 
 type BitSetProvider interface {
@@ -52,16 +53,19 @@ func (f *BloomFilter) Exists(data []byte) (bool, error) {
 }
 
 func (f *BloomFilter) getLocations(data []byte) []uint {
-	hashValue := getHash(data)
 	locations := make([]uint, f.k)
 	for i := uint(0); i < f.k; i++ {
+		hashValue := getHash(data, i)
 		locations[i] = uint((hashValue * uint64(i+1)) % uint64(f.m))
 	}
 	return locations
 }
 
-func getHash(data []byte) uint64 {
+func getHash(data []byte, k uint) uint64 {
 	hasher := fnv.New64()
 	hasher.Write(data)
+	a := make([]byte, 4)
+	binary.LittleEndian.PutUint32(a, uint32(k))
+	hasher.Write(a)
 	return hasher.Sum64()
 }
