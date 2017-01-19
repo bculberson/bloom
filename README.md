@@ -46,3 +46,4 @@ exists, _ := b.Exists([]byte("some key"))
 doesNotExist, _ := b.Exists([]byte("some other key"))
 ```
 
+Current build status is available https://travis-ci.org/bculberson/bloom
