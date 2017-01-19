@@ -7,15 +7,16 @@ https://en.wikipedia.org/wiki/Bloom_filter
 
 ## Example Usage (in process):
 
-install with go get gopkg.in/bculberson/bloom.v1
+install with go get gopkg.in/bculberson/bloom.v2
 
-import "gopkg.in/bculberson/bloom.v1"
+import "gopkg.in/bculberson/bloom.v2"
 
 This bloom filter is initialized to hold 1000 keys and
 will have a false positive rate of 1% (.01).
 
 ```go
-b := bloom.New(1000, .01, bloom.NewBitSet())
+m, k := bloom.EstimateParameters(1000, .01)
+b := bloom.New(m, k, bloom.NewBitSet())
 b.Add([]byte("some key"))
 exists, _ := b.Exists([]byte("some key"))
 doesNotExist, _ := b.Exists([]byte("some other key"))
@@ -37,8 +38,9 @@ pool := &redis.Pool{
 
 
 conn := pool.Get()
-bitSet := bloom.NewRedisBitSet("test_key", conn)
-b := bloom.New(1000, .01, bitSet)
+m, k := bloom.EstimateParameters(1000, .01)
+bitSet := bloom.NewRedisBitSet("test_key", m, conn)
+b := bloom.New(m, k, bitSet)
 b.Add([]byte("some key"))
 exists, _ := b.Exists([]byte("some key"))
 doesNotExist, _ := b.Exists([]byte("some other key"))

@@ -24,7 +24,7 @@ func TestRedisBitSet_New_Set_Test(t *testing.T) {
 	conn := pool.Get()
 	defer conn.Close()
 
-	bitSet := bloom.NewRedisBitSet("test_key", conn)
+	bitSet := bloom.NewRedisBitSet("test_key", 512, conn)
 	isSetBefore, err := bitSet.Test([]uint{0})
 	if err != nil {
 		t.Error("Could not test bitset in redis")
@@ -42,5 +42,9 @@ func TestRedisBitSet_New_Set_Test(t *testing.T) {
 	}
 	if !isSetAfter {
 		t.Error("Bit should be set")
+	}
+	err = bitSet.Delete()
+	if err != nil {
+		t.Errorf("Error cleaning up bitset: %v", err)
 	}
 }
