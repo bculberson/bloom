@@ -16,7 +16,7 @@ will have a false positive rate of 1% (.01).
 
 ```go
 m, k := bloom.EstimateParameters(1000, .01)
-b := bloom.New(m, k, bloom.NewBitSet())
+b := bloom.New(m, k, bloom.NewBitSet(m))
 b.Add([]byte("some key"))
 exists, _ := b.Exists([]byte("some key"))
 doesNotExist, _ := b.Exists([]byte("some other key"))

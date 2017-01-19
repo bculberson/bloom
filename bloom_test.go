@@ -33,7 +33,7 @@ func TestRedisBloomFilter(t *testing.T) {
 
 func TestBloomFilter(t *testing.T) {
 	m, k := bloom.EstimateParameters(1000, .01)
-	b := bloom.New(m, k, bloom.NewBitSet())
+	b := bloom.New(m, k, bloom.NewBitSet(m))
 	testBloomFilter(t, b)
 }
 
@@ -41,7 +41,7 @@ func TestCollision(t *testing.T) {
 	n := uint(10000)
 	fp := .01
 	m, k := bloom.EstimateParameters(n, fp)
-	b := bloom.New(m, k, bloom.NewBitSet())
+	b := bloom.New(m, k, bloom.NewBitSet(m))
 	shouldNotExist := 0
 	for i := uint(0); i < n; i++ {
 		data := make([]byte, 4)
