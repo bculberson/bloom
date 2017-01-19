@@ -2,16 +2,23 @@
 
 Bloom filter for go, backed by redis or in process bitset
 
-For more information on the uses of Bloom filters, please read
-https://en.wikipedia.org/wiki/Bloom_filter
+If you are not familiar with how Bloom filters work and their usefulness, 
+[please read](https://en.wikipedia.org/wiki/Bloom_filter).
 
 [![Build Status](https://travis-ci.org/bculberson/bloom.svg?branch=master)](https://travis-ci.org/bculberson/bloom)
 
 ## Example Usage (in process):
 
-install with go get gopkg.in/bculberson/bloom.v2
+install with 
+```
+go get gopkg.in/bculberson/bloom.v2
+```
 
-import "gopkg.in/bculberson/bloom.v2"
+``go
+import (
+  "gopkg.in/bculberson/bloom.v2"
+)
+``
 
 This bloom filter is initialized to hold 1000 keys and
 will have a false positive rate of 1% (.01).
@@ -29,7 +36,7 @@ doesNotExist, _ := b.Exists([]byte("some other key"))
 This bloom filter is initialized to hold 1000 keys and
 will have a false positive rate of 1% (.01).
 
-This library uses http://github.com/garyburd/redigo/redis
+This library uses [http://github.com/garyburd/redigo/redis](http://github.com/garyburd/redigo/redis)
 
 ```go
 pool := &redis.Pool{
