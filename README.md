@@ -5,6 +5,8 @@ Bloom filter for go, backed by redis or in process bitset
 For more information on the uses of Bloom filters, please read
 https://en.wikipedia.org/wiki/Bloom_filter
 
+[![Build Status](https://travis-ci.org/bculberson/bloom.svg?branch=master)](https://travis-ci.org/bculberson/bloom)
+
 ## Example Usage (in process):
 
 install with go get gopkg.in/bculberson/bloom.v2
@@ -45,5 +47,3 @@ b.Add([]byte("some key"))
 exists, _ := b.Exists([]byte("some key"))
 doesNotExist, _ := b.Exists([]byte("some other key"))
 ```
-
-Current build status is available https://travis-ci.org/bculberson/bloom
