@@ -51,6 +51,19 @@ func (r *RedisBitSet) Test(offsets []uint) (bool, error) {
 	return true, nil
 }
 
+func (r *RedisBitSet) Expire(seconds uint) error {
+	n := uint(0)
+	for n <= uint(r.m/redisMaxLength) {
+		key := fmt.Sprintf("%s:%d", r.keyPrefix, n)
+		n = n + 1
+		err := r.conn.Send("EXPIRE", key, seconds)
+		if err != nil {
+			return err
+		}
+	}
+	return r.conn.Flush()
+}
+
 func (r *RedisBitSet) Delete() error {
 	n := uint(0)
 	keys := make([]string, 0)

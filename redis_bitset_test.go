@@ -43,6 +43,10 @@ func TestRedisBitSet_New_Set_Test(t *testing.T) {
 	if !isSetAfter {
 		t.Error("Bit should be set")
 	}
+	err = bitSet.Expire(3600)
+	if err != nil {
+		t.Errorf("Error adding expiration to bitset: %v", err)
+	}
 	err = bitSet.Delete()
 	if err != nil {
 		t.Errorf("Error cleaning up bitset: %v", err)
